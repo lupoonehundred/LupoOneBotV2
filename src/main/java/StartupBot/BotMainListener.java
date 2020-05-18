@@ -1,30 +1,28 @@
 package StartupBot;
 
-import StartupBot.BotListeners.BotSetup;
 import StartupBot.BotListeners.BotVerification;
+import StartupBot.BotVoice.BotAudio;
+
+import java.util.ArrayList;
 
 public class BotMainListener extends BotLogin {
     public void mainListeners() {
         getApi().addMessageCreateListener(mainEvent -> {
             getLogger().info("Received a Message, checking for content " + mainEvent.getMessage().getContent());
             switch (mainEvent.getMessage().getContent()) {
-                case "!setup":
-                    getLogger().info("Sending to the BotSetup with an Api, a User and an Event.");
-                    new BotSetup(mainEvent.getMessage().getUserAuthor().get(), mainEvent);
-                    break;
                 case "!request":
+                    ArrayList<String> musicQueue = new ArrayList<>();
+                    musicQueue.add(mainEvent.getMessage().getContent().substring(9));
                 case "!song":
                 case "!skip":
                 case "!stop":
+                case "!join":
                     getLogger().info("Sending to the BotAudio with a Server and the Event.");
-                    //BotAudio(getCurrentServer(), mainEvent);
+                    new BotAudio(getCurrentServer(), mainEvent, musicQueue).botMusic();
                     break;
             }
         });
         getApi().addServerMemberJoinListener(new BotVerification());
-
-        getLogger().info("Sending to the BotAudio because someone joined a voice channel.");
-        //getApi().addServerVoiceChannelMemberJoinListener(new BotAudio());
     }
 }
 /*
